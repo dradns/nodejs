@@ -105,5 +105,19 @@ module.exports = function(passport){
         })
   });
 
+  router.get('/',function (req, res) {
+    res.send('<h1>Hello</h1>');
+  });
+
+//working with database - lists of tasks
+  router.get('/tasks',function (req, res) {
+    db.collection('tasks').find().toArray( function (err, docs) {
+      if(err){
+        console.log(err);
+        return res.sendStatus(500);
+      }
+      res.send(docs);
+    })
+  });
   return router;
 };

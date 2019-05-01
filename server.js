@@ -19,22 +19,36 @@ app.use(cookieParser());
 
 
 
-app.get('/',function (req, res) {
-    res.send('<h1>Hello</h1>');
+
+
+
+// Initialize Passport
+var initPassport = require('./passport/init');
+initPassport(passport);
+
+var routes = require('./routes/index')(passport);
+app.use('/', routes);
+
+/// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
-//working with database - lists of tasks
-app.get('/tasks',function (req, res) {
-    db.collection('tasks').find().toArray( function (err, docs) {
-        if(err){
-            console.log(err);
-            return res.sendStatus(500);
-        }
-        res.send(docs);
-    })
-});
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
+    });
+}
 
-
+module.exports = app;
 
 //app.listen(3000, function(){ console.log('YEEEE');});
 
